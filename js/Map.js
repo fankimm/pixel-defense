@@ -187,32 +187,54 @@ class Map {
         this.ctx.arc(spawnX, spawnY, 12, 0, Math.PI * 2);
         this.ctx.fill();
 
-        // Draw animated arrow pointing to spawn
+        // Draw arrow showing enemy movement direction
         this.ctx.save();
-        this.ctx.translate(spawnX, spawnY - 35);
 
-        // Animate arrow bounce
-        const bounceOffset = Math.sin(Date.now() / 200) * 3;
-        this.ctx.translate(0, bounceOffset);
+        // Calculate initial movement direction
+        const firstPoint = CONFIG.MAP_PATH[0];
+        const secondPoint = CONFIG.MAP_PATH[1];
+        const dx = secondPoint.x - firstPoint.x;
+        const dy = secondPoint.y - firstPoint.y;
 
-        // Draw arrow pointing down
-        this.ctx.strokeStyle = '#ffffff';
-        this.ctx.lineWidth = 3;
+        // Determine arrow direction
+        let arrowAngle = 0;
+        if (dx > 0) arrowAngle = 0; // Right
+        else if (dx < 0) arrowAngle = Math.PI; // Left
+        else if (dy > 0) arrowAngle = Math.PI / 2; // Down
+        else if (dy < 0) arrowAngle = -Math.PI / 2; // Up
+
+        // Position arrow slightly offset from spawn in movement direction
+        const arrowOffset = 25;
+        const arrowX = spawnX + Math.cos(arrowAngle) * arrowOffset;
+        const arrowY = spawnY + Math.sin(arrowAngle) * arrowOffset;
+
+        this.ctx.translate(arrowX, arrowY);
+        this.ctx.rotate(arrowAngle);
+
+        // Animate arrow pulse
+        const pulseSize = 1 + Math.sin(Date.now() / 300) * 0.2;
+        this.ctx.scale(pulseSize, pulseSize);
+
+        // Draw arrow
+        this.ctx.strokeStyle = '#ffff00';
+        this.ctx.fillStyle = '#ffff00';
+        this.ctx.lineWidth = 2;
         this.ctx.lineCap = 'round';
         this.ctx.lineJoin = 'round';
 
-        // Arrow shaft
+        // Arrow body
         this.ctx.beginPath();
-        this.ctx.moveTo(0, -15);
-        this.ctx.lineTo(0, 0);
+        this.ctx.moveTo(-10, 0);
+        this.ctx.lineTo(5, 0);
         this.ctx.stroke();
 
-        // Arrow head
+        // Arrow head (filled triangle)
         this.ctx.beginPath();
-        this.ctx.moveTo(-8, -5);
-        this.ctx.lineTo(0, 0);
-        this.ctx.lineTo(8, -5);
-        this.ctx.stroke();
+        this.ctx.moveTo(5, -5);
+        this.ctx.lineTo(15, 0);
+        this.ctx.lineTo(5, 5);
+        this.ctx.closePath();
+        this.ctx.fill();
 
         this.ctx.restore();
         
