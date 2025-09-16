@@ -30,45 +30,50 @@ class UIManager {
         const mobileLanguageSelector = document.getElementById('mobile-language-selector');
 
         if (hamburgerBtn && mobileMenu) {
+            // Initialize menu as hidden with inline styles
+            mobileMenu.style.display = 'none';
+            mobileMenu.style.position = 'fixed';
+            mobileMenu.style.top = '50px';
+            mobileMenu.style.right = '10px';
+            mobileMenu.style.backgroundColor = '#16213e';
+            mobileMenu.style.border = '2px solid #0f3460';
+            mobileMenu.style.borderRadius = '12px';
+            mobileMenu.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.5)';
+            mobileMenu.style.zIndex = '99999';
+            mobileMenu.style.minWidth = '200px';
+            mobileMenu.style.padding = '0';
+
             hamburgerBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                hamburgerBtn.classList.toggle('active');
-                mobileMenu.classList.toggle('active');
 
-                // Force style update for file:// protocol compatibility
-                if (mobileMenu.classList.contains('active')) {
+                const isActive = mobileMenu.style.display === 'block';
+
+                if (!isActive) {
+                    // Show menu
                     mobileMenu.style.display = 'block';
-                    const rect = mobileMenu.getBoundingClientRect();
-                    console.log('Menu position:', {
-                        top: rect.top,
-                        right: rect.right,
-                        bottom: rect.bottom,
-                        left: rect.left,
-                        width: rect.width,
-                        height: rect.height,
-                        visible: rect.width > 0 && rect.height > 0,
-                        inViewport: rect.top >= 0 && rect.left >= 0 && rect.bottom <= window.innerHeight && rect.right <= window.innerWidth
-                    });
-                    console.log('Menu computed styles:', {
-                        display: window.getComputedStyle(mobileMenu).display,
-                        visibility: window.getComputedStyle(mobileMenu).visibility,
-                        opacity: window.getComputedStyle(mobileMenu).opacity,
-                        zIndex: window.getComputedStyle(mobileMenu).zIndex,
-                        position: window.getComputedStyle(mobileMenu).position,
-                        backgroundColor: window.getComputedStyle(mobileMenu).backgroundColor
-                    });
+                    mobileMenu.style.visibility = 'visible';
+                    mobileMenu.style.opacity = '1';
+                    hamburgerBtn.classList.add('active');
+
+                    console.log('Menu opened');
                 } else {
+                    // Hide menu
                     mobileMenu.style.display = 'none';
+                    hamburgerBtn.classList.remove('active');
+
+                    console.log('Menu closed');
                 }
             });
 
             // Close menu when clicking outside
             document.addEventListener('click', (e) => {
                 if (!hamburgerBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
-                    hamburgerBtn.classList.remove('active');
-                    mobileMenu.classList.remove('active');
-                    mobileMenu.style.display = 'none';
+                    if (mobileMenu.style.display === 'block') {
+                        hamburgerBtn.classList.remove('active');
+                        mobileMenu.style.display = 'none';
+                        console.log('Menu closed by outside click');
+                    }
                 }
             });
         }
