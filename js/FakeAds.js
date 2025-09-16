@@ -3,6 +3,8 @@ class FakeAdManager {
         this.adChangeInterval = null;
         this.lastAdChangeTime = 0;
         this.minAdDuration = 5000; // Minimum 5 seconds between ad changes
+        this.isProcessingClick = false; // Prevent rapid clicks
+        this.clickCooldown = 500; // Minimum time between clicks
 
         // Use i18n ads if available, otherwise fall back to Korean ads
         this.adTemplates = (typeof i18n !== 'undefined' && i18n.getRandomAd) ?
@@ -209,7 +211,7 @@ class FakeAdManager {
     showRandomAd() {
         // Prevent too frequent ad changes
         const now = Date.now();
-        if (now - this.lastAdChangeTime < this.minAdDuration) {
+        if (now - this.lastAdChangeTime < this.minAdDuration && !this.isProcessingClick) {
             return;
         }
         this.lastAdChangeTime = now;
@@ -300,9 +302,16 @@ class FakeAdManager {
     }
     
     handleAdClick() {
+        // Prevent rapid clicks
+        if (this.isProcessingClick) {
+            return;
+        }
+
+        this.isProcessingClick = true;
+
         const adContent = document.getElementById('ad-content');
         const message = adContent.dataset.clickMessage;
-        
+
         // 잠시 메시지 표시
         const originalContent = adContent.innerHTML;
         adContent.innerHTML = `
@@ -310,11 +319,13 @@ class FakeAdManager {
                 ${message}
             </div>
         `;
-        
+
         // 3초 후 새로운 광고 표시 - but respect minimum duration
         setTimeout(() => {
             this.lastAdChangeTime = 0; // Reset to allow change
             this.showRandomAd();
+            // Allow clicks again after the ad changes
+            this.isProcessingClick = false;
         }, 3000);
     }
     

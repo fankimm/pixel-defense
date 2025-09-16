@@ -30,7 +30,8 @@ class UIManager {
         const mobileLanguageSelector = document.getElementById('mobile-language-selector');
 
         if (hamburgerBtn && mobileMenu) {
-            hamburgerBtn.addEventListener('click', () => {
+            hamburgerBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
                 hamburgerBtn.classList.toggle('active');
                 mobileMenu.classList.toggle('active');
             });
