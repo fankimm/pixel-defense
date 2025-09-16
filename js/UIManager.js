@@ -27,12 +27,20 @@ class UIManager {
             location.reload();
         });
 
-        // New game button
-        document.getElementById('new-game-btn').addEventListener('click', () => {
-            if (confirm(i18n.t('confirmNewGame') || 'Start a new game? Current progress will be lost.')) {
-                this.gameEngine.restartGame();
+        // New game button - remove old listener first to prevent duplicates
+        const newGameBtn = document.getElementById('new-game-btn');
+        if (newGameBtn) {
+            // Store handler as a property to be able to remove it
+            if (this.newGameHandler) {
+                newGameBtn.removeEventListener('click', this.newGameHandler);
             }
-        });
+            this.newGameHandler = () => {
+                if (confirm(i18n.t('confirmNewGame') || 'Start a new game? Current progress will be lost.')) {
+                    this.gameEngine.restartGame();
+                }
+            };
+            newGameBtn.addEventListener('click', this.newGameHandler);
+        }
         
         // Speed control buttons - add touch support for mobile
         const speedButtons = document.querySelectorAll('.speed-btn');

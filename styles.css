@@ -124,9 +124,36 @@ body {
 
 @media (max-width: 768px) {
     .language-selector {
+        font-size: 11px;
+        padding: 4px 6px;
+        min-width: 80px;
+        margin-left: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    #game-header {
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 5px;
+    }
+
+    .language-selector {
+        margin-top: 5px;
+        width: 100%;
+        max-width: 150px;
+    }
+
+    .new-game-btn {
+        padding: 6px 10px;
         font-size: 12px;
-        padding: 6px 8px;
-        min-width: 100px;
+        margin-left: 5px;
+    }
+
+    .auto-wave-toggle {
+        padding: 6px 10px;
+        font-size: 12px;
+        margin-left: 5px;
     }
 }
 

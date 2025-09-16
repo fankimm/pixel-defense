@@ -1,5 +1,9 @@
 class FakeAdManager {
     constructor() {
+        this.adChangeInterval = null;
+        this.lastAdChangeTime = 0;
+        this.minAdDuration = 5000; // Minimum 5 seconds between ad changes
+
         // Use i18n ads if available, otherwise fall back to Korean ads
         this.adTemplates = (typeof i18n !== 'undefined' && i18n.getRandomAd) ?
             this.generateI18nAds() : [
@@ -152,9 +156,14 @@ class FakeAdManager {
             const adContent = document.getElementById('ad-content');
             if (adContent || attempts > 10) {
                 this.showRandomAd();
-                
-                // 30초마다 광고 변경
-                setInterval(() => {
+
+                // Clear any existing interval
+                if (this.adChangeInterval) {
+                    clearInterval(this.adChangeInterval);
+                }
+
+                // Set new interval - 30 seconds
+                this.adChangeInterval = setInterval(() => {
                     this.showRandomAd();
                 }, 30000);
             } else {
@@ -162,7 +171,7 @@ class FakeAdManager {
                 setTimeout(tryShowAd, 100);
             }
         };
-        
+
         tryShowAd();
         
         // 광고 클릭 이벤트 - null 체크 추가
@@ -173,23 +182,37 @@ class FakeAdManager {
             });
         }
         
-        // Window resize 이벤트 처리
+        // Window resize 이벤트 처리 - debounced and rate limited
         let resizeTimeout;
+        let lastResizeUpdate = 0;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
-                this.showRandomAd();
-            }, 250);
+                // Only update if enough time has passed
+                const now = Date.now();
+                if (now - lastResizeUpdate > 2000) { // At least 2 seconds between resize updates
+                    this.updateAdLayout(); // Just update layout, don't change ad
+                    lastResizeUpdate = now;
+                }
+            }, 500); // Increased debounce time
         });
     }
     
     showRandomAd() {
+        // Prevent too frequent ad changes
+        const now = Date.now();
+        if (now - this.lastAdChangeTime < this.minAdDuration) {
+            return;
+        }
+        this.lastAdChangeTime = now;
+
         // Regenerate ads if i18n is available (in case language changed)
         if (typeof i18n !== 'undefined' && i18n.getRandomAd) {
             this.adTemplates = this.generateI18nAds();
         }
 
         const randomAd = this.adTemplates[Math.floor(Math.random() * this.adTemplates.length)];
+        this.currentAd = randomAd; // Store current ad
         const adContent = document.getElementById('ad-content');
         
         if (!adContent) {
@@ -228,9 +251,44 @@ class FakeAdManager {
         }
         
         adContent.dataset.clickMessage = randomAd.clickMessage;
-        
+
         // 배너 다시 표시 (X 버튼으로 닫았을 경우를 위해)
         document.getElementById('fake-ad-banner').style.display = 'flex';
+    }
+
+    // New method to just update layout without changing ad content
+    updateAdLayout() {
+        if (!this.currentAd) return;
+
+        const adContent = document.getElementById('ad-content');
+        if (!adContent) return;
+
+        const windowWidth = window.innerWidth;
+
+        if (windowWidth <= 500) {
+            // Very narrow - show title only
+            adContent.innerHTML = `
+                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; padding: 5px;">
+                    <span class="fake-ad-title" style="font-size: 12px;">${this.currentAd.title}</span>
+                </div>
+            `;
+        } else if (windowWidth <= 768) {
+            // Mobile layout - title and text
+            adContent.innerHTML = `
+                <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; text-align: center; padding: 5px;">
+                    <span class="fake-ad-title" style="font-size: 13px;">${this.currentAd.title}</span>
+                    <span class="fake-ad-text" style="font-size: 11px;">${this.currentAd.text}</span>
+                </div>
+            `;
+        } else {
+            // Desktop layout - horizontal with all text
+            adContent.innerHTML = `
+                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; gap: 20px;">
+                    <span class="fake-ad-title">${this.currentAd.title}</span>
+                    <span class="fake-ad-text">${this.currentAd.text}</span>
+                </div>
+            `;
+        }
     }
     
     handleAdClick() {
@@ -245,8 +303,9 @@ class FakeAdManager {
             </div>
         `;
         
-        // 3초 후 새로운 광고 표시
+        // 3초 후 새로운 광고 표시 - but respect minimum duration
         setTimeout(() => {
+            this.lastAdChangeTime = 0; // Reset to allow change
             this.showRandomAd();
         }, 3000);
     }
