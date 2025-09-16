@@ -29,20 +29,40 @@ class UIManager {
         const mobileNewGameBtn = document.getElementById('mobile-new-game-btn');
         const mobileLanguageSelector = document.getElementById('mobile-language-selector');
 
+        console.log('=== Hamburger Menu Debug ===');
+        console.log('hamburgerBtn found:', hamburgerBtn);
+        console.log('mobileMenu found:', mobileMenu);
+        console.log('hamburgerBtn classes:', hamburgerBtn?.className);
+        console.log('mobileMenu classes:', mobileMenu?.className);
+        console.log('hamburgerBtn computed style display:', hamburgerBtn ? window.getComputedStyle(hamburgerBtn).display : 'N/A');
+        console.log('Window width:', window.innerWidth);
+
         if (hamburgerBtn && mobileMenu) {
             hamburgerBtn.addEventListener('click', (e) => {
+                console.log('=== Hamburger Click Event ===');
+                console.log('Event target:', e.target);
+                console.log('Current hamburgerBtn classes before toggle:', hamburgerBtn.className);
+                console.log('Current mobileMenu classes before toggle:', mobileMenu.className);
+
                 e.stopPropagation();
                 hamburgerBtn.classList.toggle('active');
                 mobileMenu.classList.toggle('active');
+
+                console.log('Current hamburgerBtn classes after toggle:', hamburgerBtn.className);
+                console.log('Current mobileMenu classes after toggle:', mobileMenu.className);
+                console.log('mobileMenu computed style display:', window.getComputedStyle(mobileMenu).display);
             });
 
             // Close menu when clicking outside
             document.addEventListener('click', (e) => {
                 if (!hamburgerBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+                    console.log('=== Outside Click - Closing Menu ===');
                     hamburgerBtn.classList.remove('active');
                     mobileMenu.classList.remove('active');
                 }
             });
+        } else {
+            console.log('ERROR: hamburgerBtn or mobileMenu not found!');
         }
 
         // Mobile new game button
