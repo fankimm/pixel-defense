@@ -127,12 +127,17 @@ class FakeAdManager {
             const clickMessages = i18n.translations[lang].adClickMessages || i18n.translations['en'].adClickMessages || [];
 
             adTexts.forEach((text, index) => {
+                // Process click message to replace random number placeholder
+                let clickMessage = clickMessages[index] || clickMessages[index % clickMessages.length] || "😄";
+                // Replace any occurrence of visitor number with actual random number
+                clickMessage = clickMessage.replace(/\#999999/g, '#' + Math.floor(Math.random() * 999999999));
+
                 ads.push({
                     template: (index % 6) + 1,
                     title: text,
                     text: "",
                     button: "Click Here!",
-                    clickMessage: clickMessages[index] || clickMessages[index % clickMessages.length] || "😄"
+                    clickMessage: clickMessage
                 });
             });
         }

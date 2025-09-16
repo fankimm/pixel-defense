@@ -258,7 +258,7 @@ body {
     display: none;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
     .desktop-only {
         display: none !important;
     }
@@ -275,12 +275,16 @@ body {
     }
 
     .header-item {
-        font-size: 14px;
+        font-size: 11px;
         gap: 5px;
     }
 
+    .header-item .label {
+        font-size: 11px;
+    }
+
     #start-wave-btn {
-        padding: 6px 10px;
+        padding: 4px 8px;
         font-size: 11px;
     }
 
@@ -288,6 +292,16 @@ body {
         padding: 4px 8px;
         font-size: 11px;
         margin-left: 5px;
+    }
+
+    .auto-wave-toggle input[type="checkbox"] {
+        width: 14px;
+        height: 14px;
+        margin-right: 4px;
+    }
+
+    .auto-wave-toggle .toggle-text {
+        font-size: 11px;
     }
 }
 
