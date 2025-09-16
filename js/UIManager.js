@@ -29,35 +29,15 @@ class UIManager {
         const mobileNewGameBtn = document.getElementById('mobile-new-game-btn');
         const mobileLanguageSelector = document.getElementById('mobile-language-selector');
 
-        // Debug info for file:// vs http://
-        console.log('Protocol:', window.location.protocol);
-        console.log('Hamburger button found:', !!hamburgerBtn);
-        console.log('Mobile menu found:', !!mobileMenu);
-        if (hamburgerBtn) {
-            const styles = window.getComputedStyle(hamburgerBtn);
-            console.log('Hamburger display:', styles.display);
-            console.log('Hamburger visibility:', styles.visibility);
-            console.log('Hamburger opacity:', styles.opacity);
-        }
-        if (mobileMenu) {
-            const styles = window.getComputedStyle(mobileMenu);
-            console.log('Menu display:', styles.display);
-            console.log('Menu position:', styles.position);
-            console.log('Menu z-index:', styles.zIndex);
-        }
-
         if (hamburgerBtn && mobileMenu) {
             hamburgerBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                console.log('Hamburger clicked!');
                 hamburgerBtn.classList.toggle('active');
                 mobileMenu.classList.toggle('active');
 
-                // Force style update
+                // Force style update for file:// protocol compatibility
                 mobileMenu.style.display = mobileMenu.classList.contains('active') ? 'block' : 'none';
-                console.log('Menu active:', mobileMenu.classList.contains('active'));
-                console.log('Menu inline style:', mobileMenu.style.display);
             });
 
             // Close menu when clicking outside
