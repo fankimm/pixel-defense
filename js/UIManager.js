@@ -22,6 +22,57 @@ class UIManager {
         });
         // Restore auto wave state
         autoWaveCheckbox.checked = this.gameEngine.autoWaveEnabled;
+
+        // Hamburger menu functionality
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileNewGameBtn = document.getElementById('mobile-new-game-btn');
+        const mobileLanguageSelector = document.getElementById('mobile-language-selector');
+
+        if (hamburgerBtn && mobileMenu) {
+            hamburgerBtn.addEventListener('click', () => {
+                hamburgerBtn.classList.toggle('active');
+                mobileMenu.classList.toggle('active');
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!hamburgerBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+                    hamburgerBtn.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                }
+            });
+        }
+
+        // Mobile new game button
+        if (mobileNewGameBtn) {
+            mobileNewGameBtn.addEventListener('click', () => {
+                if (confirm(i18n.t('confirmNewGame') || 'Start a new game? Current progress will be lost.')) {
+                    this.gameEngine.restartGame();
+                    // Close menu after action
+                    hamburgerBtn.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                }
+            });
+        }
+
+        // Mobile language selector
+        if (mobileLanguageSelector) {
+            // Set current language
+            mobileLanguageSelector.value = i18n.currentLang;
+
+            mobileLanguageSelector.addEventListener('change', (e) => {
+                i18n.changeLanguage(e.target.value);
+                // Update desktop selector too
+                const desktopSelector = document.getElementById('language-selector');
+                if (desktopSelector) {
+                    desktopSelector.value = e.target.value;
+                }
+                // Update mobile menu text
+                mobileNewGameBtn.textContent = i18n.t('newGame');
+                document.querySelector('.mobile-menu-label').textContent = i18n.t('language') + ':';
+            });
+        }
         
         document.getElementById('restart-btn').addEventListener('click', () => {
             location.reload();

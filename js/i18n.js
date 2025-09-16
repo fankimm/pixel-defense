@@ -17,6 +17,7 @@ const i18n = {
             spawn: "SPAWN",
             newGame: "New Game",
             confirmNewGame: "Start a new game? Current progress will be lost.",
+            language: "Language",
 
             // Tower names
             basic: "Basic",
@@ -48,6 +49,18 @@ const i18n = {
                 "Get rich with this ONE SIMPLE tower placement!",
                 "Your towers need updating! Click here! (Just kidding)",
                 "Warning: Your defense is not optimized! (It's fine actually)"
+            ],
+            adClickMessages: [
+                "The singles are all towers... they're already in the game!",
+                "The trick: just build more towers!",
+                "Wave 50 looks exactly like Wave 49, but harder!",
+                "You can't download RAM... it's hardware!",
+                "Still banned in 0 countries!",
+                "You're actually visitor #" + Math.floor(Math.random() * 999999999) + "!",
+                "Scientists are too busy playing this game!",
+                "Secret: spam towers everywhere!",
+                "Your towers are already perfect!",
+                "Your defense was optimized all along!"
             ]
         },
 
@@ -91,6 +104,18 @@ const i18n = {
                 "用这个简单的塔位置致富！",
                 "你的塔需要更新！点击这里！（开玩笑的）",
                 "警告：你的防御未优化！（其实没事）"
+            ],
+            adClickMessages: [
+                "单身都是塔...它们已经在游戏里了！",
+                "秘诀：多建塔就对了！",
+                "第50波看起来和第49波一样，但更难！",
+                "你不能下载内存...那是硬件！",
+                "仍然在0个国家被禁！",
+                "你实际上是第" + Math.floor(Math.random() * 999999999) + "位访客！",
+                "科学家们都在忙着玩这个游戏！",
+                "秘密：到处放塔！",
+                "你的塔已经完美了！",
+                "你的防御一直都是优化的！"
             ]
         },
 
@@ -134,6 +159,18 @@ const i18n = {
                 "¡Hazte rico con esta SIMPLE colocación de torre!",
                 "¡Tus torres necesitan actualización! ¡Haz clic aquí! (Es broma)",
                 "Advertencia: ¡Tu defensa no está optimizada! (En realidad está bien)"
+            ],
+            adClickMessages: [
+                "Los solteros son torres... ¡ya están en el juego!",
+                "El truco: ¡solo construye más torres!",
+                "¡La Oleada 50 es como la 49, pero más difícil!",
+                "No puedes descargar RAM... ¡es hardware!",
+                "¡Todavía prohibido en 0 países!",
+                "¡Eres el visitante #" + Math.floor(Math.random() * 999999999) + "!",
+                "¡Los científicos están ocupados jugando!",
+                "Secreto: ¡torres por todas partes!",
+                "¡Tus torres ya son perfectas!",
+                "¡Tu defensa siempre estuvo optimizada!"
             ]
         },
 
@@ -175,6 +212,18 @@ const i18n = {
                 "इस सिंपल टावर प्लेसमेंट से अमीर बनें!",
                 "आपके टावर को अपडेट की ज़रूरत है! (मज़ाक कर रहे हैं)",
                 "चेतावनी: आपका डिफेंस ऑप्टिमाइज़ नहीं है! (असल में ठीक है)"
+            ],
+            adClickMessages: [
+                "टावर पहले से ही गेम में हैं!",
+                "राज़: बस और टावर बनाओ!",
+                "वेव 50 वेव 49 जैसी है, बस कठिन!",
+                "आप RAM डाउनलोड नहीं कर सकते... यह हार्डवेयर है!",
+                "अभी भी 0 देशों में प्रतिबंधित!",
+                "आप वास्तव में विज़िटर #" + Math.floor(Math.random() * 999999999) + " हैं!",
+                "वैज्ञानिक इस गेम को खेलने में व्यस्त हैं!",
+                "रहस्य: हर जगह टावर!",
+                "आपके टावर पहले से ही परफेक्ट हैं!",
+                "आपकी डिफेंस हमेशा से ऑप्टिमाइज़्ड थी!"
             ]
         },
 
@@ -216,6 +265,18 @@ const i18n = {
                 "اثرِ بهذا الموضع البسيط للبرج!",
                 "أبراجك تحتاج تحديث! انقر هنا! (مزحة)",
                 "تحذير: دفاعك غير محسّن! (في الواقع بخير)"
+            ],
+            adClickMessages: [
+                "الأبراج موجودة بالفعل في اللعبة!",
+                "السر: فقط ابنِ المزيد من الأبراج!",
+                "الموجة 50 مثل الموجة 49، لكن أصعب!",
+                "لا يمكنك تحميل RAM... إنه جهاز!",
+                "ما زالت محظورة في 0 دولة!",
+                "أنت في الواقع الزائر #" + Math.floor(Math.random() * 999999999) + "!",
+                "العلماء مشغولون باللعب!",
+                "سر: أبراج في كل مكان!",
+                "أبراجك مثالية بالفعل!",
+                "دفاعك كان محسّناً دائماً!"
             ]
         },
 
@@ -257,6 +318,18 @@ const i18n = {
                 "Fique rico com esta SIMPLES colocação de torre!",
                 "Suas torres precisam de atualização! Clique aqui! (Brincadeira)",
                 "Aviso: Sua defesa não está otimizada! (Está tudo bem na verdade)"
+            ],
+            adClickMessages: [
+                "As torres já estão no jogo!",
+                "O truque: apenas construa mais torres!",
+                "Onda 50 é como a 49, mas mais difícil!",
+                "Você não pode baixar RAM... é hardware!",
+                "Ainda proibido em 0 países!",
+                "Você é na verdade o visitante #" + Math.floor(Math.random() * 999999999) + "!",
+                "Os cientistas estão ocupados jogando!",
+                "Segredo: torres em todo lugar!",
+                "Suas torres já são perfeitas!",
+                "Sua defesa sempre foi otimizada!"
             ]
         },
 
@@ -298,6 +371,18 @@ const i18n = {
                 "Разбогатейте с этим ПРОСТЫМ размещением башни!",
                 "Ваши башни нуждаются в обновлении! Нажмите здесь! (Шутка)",
                 "Предупреждение: Ваша защита не оптимизирована! (На самом деле все хорошо)"
+            ],
+            adClickMessages: [
+                "Башни уже в игре!",
+                "Трюк: просто стройте больше башен!",
+                "Волна 50 как 49, но сложнее!",
+                "Вы не можете скачать RAM... это железо!",
+                "Все еще запрещена в 0 странах!",
+                "Вы на самом деле посетитель #" + Math.floor(Math.random() * 999999999) + "!",
+                "Ученые заняты игрой!",
+                "Секрет: башни везде!",
+                "Ваши башни уже идеальны!",
+                "Ваша защита всегда была оптимизирована!"
             ]
         },
 
@@ -339,6 +424,18 @@ const i18n = {
                 "このシンプルなタワー配置で金持ちになろう！",
                 "タワーの更新が必要です！ここをクリック！（冗談です）",
                 "警告：あなたの防御は最適化されていません！（実際は大丈夫）"
+            ],
+            adClickMessages: [
+                "タワーはすでにゲームにあります！",
+                "秘訣：もっとタワーを建てるだけ！",
+                "ウェーブ50は49と同じ、でも難しい！",
+                "RAMはダウンロードできません...ハードウェアです！",
+                "まだ0か国で禁止！",
+                "実はあなたは訪問者#" + Math.floor(Math.random() * 999999999) + "です！",
+                "科学者はゲームで忙しい！",
+                "秘密：どこでもタワー！",
+                "あなたのタワーはすでに完璧です！",
+                "あなたの防御は常に最適化されていました！"
             ]
         },
 
@@ -380,6 +477,18 @@ const i18n = {
                 "Reich werden mit dieser EINFACHEN Turmplatzierung!",
                 "Deine Türme brauchen ein Update! Hier klicken! (Nur Spaß)",
                 "Warnung: Deine Verteidigung ist nicht optimiert! (Ist eigentlich ok)"
+            ],
+            adClickMessages: [
+                "Die Türme sind schon im Spiel!",
+                "Der Trick: einfach mehr Türme bauen!",
+                "Welle 50 ist wie 49, aber schwerer!",
+                "Du kannst kein RAM herunterladen... es ist Hardware!",
+                "Immer noch in 0 Ländern verboten!",
+                "Du bist eigentlich Besucher #" + Math.floor(Math.random() * 999999999) + "!",
+                "Wissenschaftler sind mit Spielen beschäftigt!",
+                "Geheimnis: überall Türme!",
+                "Deine Türme sind schon perfekt!",
+                "Deine Verteidigung war immer optimiert!"
             ]
         },
 
@@ -421,6 +530,18 @@ const i18n = {
                 "Devenez riche avec ce placement de tour SIMPLE!",
                 "Vos tours ont besoin d'une mise à jour! Cliquez ici! (C'est une blague)",
                 "Attention: Votre défense n'est pas optimisée! (En fait c'est bon)"
+            ],
+            adClickMessages: [
+                "Les tours sont déjà dans le jeu!",
+                "L'astuce: construisez plus de tours!",
+                "La Vague 50 est comme la 49, mais plus difficile!",
+                "Vous ne pouvez pas télécharger de RAM... c'est du matériel!",
+                "Toujours interdit dans 0 pays!",
+                "Vous êtes en fait le visiteur #" + Math.floor(Math.random() * 999999999) + "!",
+                "Les scientifiques sont occupés à jouer!",
+                "Secret: des tours partout!",
+                "Vos tours sont déjà parfaites!",
+                "Votre défense a toujours été optimisée!"
             ]
         },
 
@@ -464,6 +585,18 @@ const i18n = {
                 "이 간단한 타워 배치로 부자가 되세요!",
                 "타워 업데이트가 필요합니다! 여기를 클릭! (농담입니다)",
                 "경고: 당신의 방어가 최적화되지 않았습니다! (사실 괜찮아요)"
+            ],
+            adClickMessages: [
+                "타워는 이미 게임 안에 많이 있잖아요...",
+                "비밀: 그냥 많이 하면 됩니다 ㅎㅎ",
+                "1, 2, 3, 4, 5, 6... 아 이건 아니네요 😂",
+                "RAM은 다운로드 할 수 없어요... 하드웨어입니다!",
+                "여전히 0개국에서 금지!",
+                "농담입니다! 계속 게임하세요 😄",
+                "비법: 포토샵을 사용하세요!",
+                "404: 억만장자 되는 방법을 찾을 수 없습니다 ㅋㅋ",
+                "이미 이 게임 하는 것만으로도 충분히 똑똑해요!",
+                "공유기 재시작해보세요. 그게 진짜 트릭입니다!"
             ]
         },
 
@@ -505,6 +638,18 @@ const i18n = {
                 "Diventa ricco con questo SEMPLICE piazzamento di torre!",
                 "Le tue torri necessitano aggiornamento! Clicca qui! (Scherzo)",
                 "Attenzione: La tua difesa non è ottimizzata! (In realtà va bene)"
+            ],
+            adClickMessages: [
+                "Le torri sono già nel gioco!",
+                "Il trucco: costruisci più torri!",
+                "L'Ondata 50 è come la 49, ma più difficile!",
+                "Non puoi scaricare RAM... è hardware!",
+                "Ancora vietato in 0 paesi!",
+                "Sei in realtà il visitatore #999999!",
+                "Gli scienziati sono occupati a giocare!",
+                "Segreto: torri ovunque!",
+                "Le tue torri sono già perfette!",
+                "La tua difesa è sempre stata ottimizzata!"
             ]
         },
 
@@ -546,6 +691,18 @@ const i18n = {
                 "Bu BASİT kule yerleşimiyle zengin olun!",
                 "Kulelerinizin güncellenmesi gerekiyor! Buraya tıklayın! (Şaka)",
                 "Uyarı: Savunmanız optimize edilmemiş! (Aslında sorun yok)"
+            ],
+            adClickMessages: [
+                "Kuleler zaten oyunda var!",
+                "Hile: daha fazla kule inşa et!",
+                "Dalga 50, 49 gibi ama daha zor!",
+                "RAM indiremezsiniz... bu donanım!",
+                "Hâlâ 0 ülkede yasak!",
+                "Aslında #999999 numaralı ziyaretçisiniz!",
+                "Bilim insanları oyun oynamakla meşgul!",
+                "Sır: her yerde kuleler!",
+                "Kuleleriniz zaten mükemmel!",
+                "Savunmanız her zaman optimize edilmişti!"
             ]
         },
 
@@ -587,6 +744,18 @@ const i18n = {
                 "Zostań bogaty z tym PROSTYM ustawieniem wieży!",
                 "Twoje wieże potrzebują aktualizacji! Kliknij tutaj! (Żart)",
                 "Ostrzeżenie: Twoja obrona nie jest zoptymalizowana! (Właściwie jest OK)"
+            ],
+            adClickMessages: [
+                "Wieże są już w grze!",
+                "Sztuczka: po prostu zbuduj więcej wież!",
+                "Fala 50 jest jak 49, ale trudniejsza!",
+                "Nie możesz pobrać RAM... to sprzęt!",
+                "Nadal zakazana w 0 krajach!",
+                "Tak naprawdę jesteś odwiedzającym #999999!",
+                "Naukowcy są zajęci graniem!",
+                "Sekret: wieże wszędzie!",
+                "Twoje wieże są już idealne!",
+                "Twoja obrona zawsze była zoptymalizowana!"
             ]
         },
 
@@ -628,6 +797,18 @@ const i18n = {
                 "Word rijk met deze SIMPELE torenplaatsing!",
                 "Je torens hebben een update nodig! Klik hier! (Grapje)",
                 "Waarschuwing: Je verdediging is niet geoptimaliseerd! (Eigenlijk prima)"
+            ],
+            adClickMessages: [
+                "De torens zijn al in het spel!",
+                "De truc: bouw gewoon meer torens!",
+                "Golf 50 is zoals 49, maar moeilijker!",
+                "Je kunt geen RAM downloaden... het is hardware!",
+                "Nog steeds verboden in 0 landen!",
+                "Je bent eigenlijk bezoeker #999999!",
+                "Wetenschappers zijn bezig met gamen!",
+                "Geheim: overal torens!",
+                "Je torens zijn al perfect!",
+                "Je verdediging was altijd al geoptimaliseerd!"
             ]
         }
     },
@@ -666,6 +847,8 @@ const i18n = {
     // Initialize language selector
     initLanguageSelector() {
         const selector = document.getElementById('language-selector');
+        const mobileSelector = document.getElementById('mobile-language-selector');
+
         if (selector) {
             // Set current language
             selector.value = this.currentLang;
@@ -673,7 +856,17 @@ const i18n = {
             // Add change event listener
             selector.addEventListener('change', (e) => {
                 this.changeLanguage(e.target.value);
+                // Sync mobile selector
+                if (mobileSelector) {
+                    mobileSelector.value = e.target.value;
+                }
             });
+        }
+
+        if (mobileSelector) {
+            // Set current language
+            mobileSelector.value = this.currentLang;
+            // Event listener is handled in UIManager
         }
     },
 

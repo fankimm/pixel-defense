@@ -122,14 +122,17 @@ class FakeAdManager {
         // Generate ads from i18n translations
         const ads = [];
         if (typeof i18n !== 'undefined' && i18n.translations && i18n.currentLang) {
-            const adTexts = i18n.translations[i18n.currentLang].ads || i18n.translations['en'].ads;
+            const lang = i18n.currentLang;
+            const adTexts = i18n.translations[lang].ads || i18n.translations['en'].ads;
+            const clickMessages = i18n.translations[lang].adClickMessages || i18n.translations['en'].adClickMessages || [];
+
             adTexts.forEach((text, index) => {
                 ads.push({
                     template: (index % 6) + 1,
                     title: text,
                     text: "",
                     button: "Click Here!",
-                    clickMessage: "😄"
+                    clickMessage: clickMessages[index] || clickMessages[index % clickMessages.length] || "😄"
                 });
             });
         }
