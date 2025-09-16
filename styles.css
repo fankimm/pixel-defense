@@ -142,7 +142,8 @@ body {
     padding: 10px;
     flex-direction: column;
     gap: 4px;
-    z-index: 1001;
+    z-index: 10001;
+    position: relative;
 }
 
 .hamburger-btn span {
@@ -169,20 +170,20 @@ body {
 .mobile-menu {
     display: none;
     position: fixed;
-    top: 60px;
-    right: 0;
+    top: 50px;
+    right: 10px;
     background: #16213e;
     border: 2px solid #0f3460;
-    border-radius: 0 0 0 12px;
+    border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    min-width: 250px;
-    max-width: 90%;
-    animation: slideIn 0.3s ease-out;
+    z-index: 10000;
+    min-width: 200px;
+    max-width: calc(100% - 20px);
 }
 
 .mobile-menu.active {
-    display: block;
+    display: block !important;
+    animation: slideIn 0.3s ease-out;
 }
 
 @keyframes slideIn {
