@@ -160,15 +160,61 @@ class Map {
             );
         });
         
-        this.ctx.fillStyle = '#22c55e';
+        // Draw spawn point with pulsing effect
         const start = CONFIG.MAP_PATH[0];
+        const spawnX = start.x * CONFIG.GRID_SIZE + CONFIG.GRID_SIZE / 2;
+        const spawnY = start.y * CONFIG.GRID_SIZE + CONFIG.GRID_SIZE / 2;
+
+        // Pulsing spawn indicator
+        const pulseScale = 1 + Math.sin(Date.now() / 300) * 0.2;
+
+        // Outer glow
+        this.ctx.fillStyle = 'rgba(34, 197, 94, 0.3)';
         this.ctx.beginPath();
-        this.ctx.arc(
-            start.x * CONFIG.GRID_SIZE + CONFIG.GRID_SIZE / 2,
-            start.y * CONFIG.GRID_SIZE + CONFIG.GRID_SIZE / 2,
-            15, 0, Math.PI * 2
-        );
+        this.ctx.arc(spawnX, spawnY, 25 * pulseScale, 0, Math.PI * 2);
         this.ctx.fill();
+
+        // Middle ring
+        this.ctx.strokeStyle = '#22c55e';
+        this.ctx.lineWidth = 2;
+        this.ctx.beginPath();
+        this.ctx.arc(spawnX, spawnY, 18 * pulseScale, 0, Math.PI * 2);
+        this.ctx.stroke();
+
+        // Inner circle
+        this.ctx.fillStyle = '#22c55e';
+        this.ctx.beginPath();
+        this.ctx.arc(spawnX, spawnY, 12, 0, Math.PI * 2);
+        this.ctx.fill();
+
+        // Draw animated arrow pointing to spawn
+        this.ctx.save();
+        this.ctx.translate(spawnX, spawnY - 35);
+
+        // Animate arrow bounce
+        const bounceOffset = Math.sin(Date.now() / 200) * 3;
+        this.ctx.translate(0, bounceOffset);
+
+        // Draw arrow pointing down
+        this.ctx.strokeStyle = '#ffffff';
+        this.ctx.lineWidth = 3;
+        this.ctx.lineCap = 'round';
+        this.ctx.lineJoin = 'round';
+
+        // Arrow shaft
+        this.ctx.beginPath();
+        this.ctx.moveTo(0, -15);
+        this.ctx.lineTo(0, 0);
+        this.ctx.stroke();
+
+        // Arrow head
+        this.ctx.beginPath();
+        this.ctx.moveTo(-8, -5);
+        this.ctx.lineTo(0, 0);
+        this.ctx.lineTo(8, -5);
+        this.ctx.stroke();
+
+        this.ctx.restore();
         
         this.ctx.fillStyle = '#ef4444';
         const end = CONFIG.MAP_PATH[CONFIG.MAP_PATH.length - 1];

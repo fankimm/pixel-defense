@@ -42,25 +42,36 @@ class SpecialEnemy extends Enemy {
         const speedModifier = this.isFrozen ? 0.5 : 1;
         const effectiveSpeed = this.speed * speedModifier;
         
-        const dx = this.targetX - this.x;
-        const dy = this.targetY - this.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        
-        if (distance < 2) {
-            this.pathIndex++;
-            if (this.pathIndex >= this.path.length) {
-                this.reachedEnd = true;
-                return;
+        // Move along path with better handling for high speeds (same as Enemy)
+        const moveDistance = effectiveSpeed * deltaTime / 1000;
+        let remainingDistance = moveDistance;
+
+        while (remainingDistance > 0 && this.pathIndex < this.path.length) {
+            const dx = this.targetX - this.x;
+            const dy = this.targetY - this.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance <= remainingDistance || distance < 2) {
+                // Move to target and continue to next point
+                this.x = this.targetX;
+                this.y = this.targetY;
+                remainingDistance -= distance;
+
+                this.pathIndex++;
+                if (this.pathIndex >= this.path.length) {
+                    this.reachedEnd = true;
+                    return;
+                }
+
+                this.targetX = this.path[this.pathIndex].x;
+                this.targetY = this.path[this.pathIndex].y;
+            } else {
+                // Move partial distance towards target
+                const ratio = remainingDistance / distance;
+                this.x += dx * ratio;
+                this.y += dy * ratio;
+                remainingDistance = 0;
             }
-            
-            this.targetX = this.path[this.pathIndex].x;
-            this.targetY = this.path[this.pathIndex].y;
-        } else {
-            const moveDistance = effectiveSpeed * deltaTime / 1000;
-            const ratio = moveDistance / distance;
-            
-            this.x += dx * ratio;
-            this.y += dy * ratio;
         }
     }
     

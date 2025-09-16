@@ -3,6 +3,9 @@ let fakeAdManager;
 
 function initGame() {
     try {
+        // Initialize internationalization first
+        i18n.init();
+
         // Ensure canvas exists
         const canvas = document.getElementById('game-canvas');
         if (!canvas) {
@@ -10,7 +13,7 @@ function initGame() {
             setTimeout(initGame, 100);
             return;
         }
-        
+
         // Initialize game engine
         gameEngine = new GameEngine();
         

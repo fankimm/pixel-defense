@@ -1,6 +1,8 @@
 class FakeAdManager {
     constructor() {
-        this.adTemplates = [
+        // Use i18n ads if available, otherwise fall back to Korean ads
+        this.adTemplates = (typeof i18n !== 'undefined' && i18n.getRandomAd) ?
+            this.generateI18nAds() : [
             {
                 template: 1,
                 title: "🤑 1명의 한국인이 이 방법으로 억만장자가 됨!",
@@ -107,9 +109,40 @@ class FakeAdManager {
                 clickMessage: "비법: 포토샵을 사용하세요!"
             }
         ];
-        
+
         this.currentAdIndex = 0;
         this.initAds();
+    }
+
+    generateI18nAds() {
+        // Generate ads from i18n translations
+        const ads = [];
+        if (typeof i18n !== 'undefined' && i18n.translations && i18n.currentLang) {
+            const adTexts = i18n.translations[i18n.currentLang].ads || i18n.translations['en'].ads;
+            adTexts.forEach((text, index) => {
+                ads.push({
+                    template: (index % 6) + 1,
+                    title: text,
+                    text: "",
+                    button: "Click Here!",
+                    clickMessage: "😄"
+                });
+            });
+        }
+        return ads.length > 0 ? ads : this.getDefaultAds();
+    }
+
+    getDefaultAds() {
+        // Return a simplified version of the original Korean ads
+        return [
+            {
+                template: 1,
+                title: "Amazing offer!",
+                text: "Click here now!",
+                button: "Click",
+                clickMessage: "Thanks for clicking!"
+            }
+        ];
     }
     
     initAds() {
@@ -151,6 +184,11 @@ class FakeAdManager {
     }
     
     showRandomAd() {
+        // Regenerate ads if i18n is available (in case language changed)
+        if (typeof i18n !== 'undefined' && i18n.getRandomAd) {
+            this.adTemplates = this.generateI18nAds();
+        }
+
         const randomAd = this.adTemplates[Math.floor(Math.random() * this.adTemplates.length)];
         const adContent = document.getElementById('ad-content');
         

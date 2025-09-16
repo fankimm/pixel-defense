@@ -30,18 +30,14 @@ class GameEngine {
         this.currentWave = 0;
         this.waveInProgress = false;
         this.gameOver = false;
-        
+
         this.enemySpawnQueue = [];
         this.lastSpawnTime = 0;
         this.speedMultiplier = 1;
-        
-        // Score and combo system
-        this.score = 0;
-        this.combo = 0;
-        this.comboTimer = 0;
-        this.lastKillTime = 0;
-        this.COMBO_TIMEOUT = 2000; // 2 seconds to maintain combo
-        
+        this.autoWaveEnabled = false;
+        this.gameTime = 0; // Track game time separately from real time
+
+
         this.storageManager = new StorageManager();
         this.uiManager = new UIManager(this);
         
@@ -52,25 +48,46 @@ class GameEngine {
     }
     
     init() {
+        // Try to load saved game state
+        const loaded = this.loadGameState();
+        if (loaded) {
+            console.log('Game state restored');
+        }
+
         // Initial render to ensure canvas is visible
         this.render();
         this.gameLoop(0);
+
+        // Auto-save periodically
+        setInterval(() => this.saveGameState(), 5000); // Save every 5 seconds
     }
     
     gameLoop(currentTime) {
         if (this.gameOver) return;
-        
-        const deltaTime = (currentTime - this.lastTime) * this.speedMultiplier;
+
+        // Fix deltaTime calculation to prevent negative or zero values
+        if (this.lastTime === 0) {
+            this.lastTime = currentTime;
+        }
+
+        const rawDeltaTime = currentTime - this.lastTime;
+        // Clamp deltaTime to prevent issues with large gaps (reduced to 50ms for better stability at high speeds)
+        const clampedDeltaTime = Math.min(rawDeltaTime, 50); // Max 50ms per frame
+        const deltaTime = clampedDeltaTime * this.speedMultiplier;
         this.lastTime = currentTime;
-        
-        this.update(deltaTime, currentTime);
+
+        // Only update if we have a valid deltaTime
+        if (deltaTime > 0) {
+            this.gameTime += deltaTime; // Update game time with speed-adjusted delta
+            this.update(deltaTime, this.gameTime);
+        }
         this.render();
-        
+
         this.animationId = requestAnimationFrame(this.gameLoop.bind(this));
     }
     
-    update(deltaTime, currentTime) {
-        this.spawnEnemies(currentTime);
+    update(deltaTime, gameTime) {
+        this.spawnEnemies(gameTime);
         
         // Update particle system
         this.particleSystem.update(deltaTime);
@@ -85,7 +102,7 @@ class GameEngine {
         
         const newProjectiles = [];
         this.towers.forEach(tower => {
-            const projectile = tower.update(this.enemies, currentTime, this.speedMultiplier);
+            const projectile = tower.update(this.enemies, gameTime, deltaTime);
             if (projectile) {
                 newProjectiles.push(new Projectile(projectile));
             }
@@ -96,26 +113,11 @@ class GameEngine {
             projectile.update(deltaTime, this.enemies);
         });
         
-        // Handle combo timeout
-        if (this.combo > 0 && Date.now() - this.lastKillTime > this.COMBO_TIMEOUT) {
-            this.combo = 0;
-        }
         
         this.enemies = this.enemies.filter(enemy => {
             if (!enemy.isAlive()) {
-                // Enemy killed - update combo and score
-                const now = Date.now();
-                if (now - this.lastKillTime < this.COMBO_TIMEOUT) {
-                    this.combo++;
-                } else {
-                    this.combo = 1;
-                }
-                this.lastKillTime = now;
-                
-                const comboMultiplier = Math.min(this.combo, 10);
-                const scoreGain = enemy.reward * comboMultiplier;
-                this.score += scoreGain;
                 this.coins += enemy.reward;
+                this.saveGameState();
                 
                 // Create particle effects
                 this.particleSystem.createExplosion(enemy.x, enemy.y, enemy.color);
@@ -136,8 +138,7 @@ class GameEngine {
                 return false;
             }
             if (enemy.hasReachedEnd()) {
-                this.playerHp--;
-                this.combo = 0; // Reset combo on life lost
+                this.playerHp = Math.max(0, this.playerHp - 1);
                 if (this.playerHp <= 0) {
                     this.endGame();
                 }
@@ -150,6 +151,14 @@ class GameEngine {
         
         if (this.waveInProgress && this.enemies.length === 0 && this.enemySpawnQueue.length === 0) {
             this.waveInProgress = false;
+            // Auto start next wave if enabled
+            if (this.autoWaveEnabled) {
+                setTimeout(() => {
+                    if (!this.gameOver && !this.waveInProgress) {
+                        this.startWave();
+                    }
+                }, 2000); // 2 second delay between waves
+            }
         }
         
         this.uiManager.updateDisplay();
@@ -185,7 +194,8 @@ class GameEngine {
             for (let i = 0; i < group.count; i++) {
                 this.enemySpawnQueue.push({
                     type: group.type,
-                    spawnTime: Date.now() + (i * group.delay) / this.speedMultiplier,
+                    spawnDelay: i * group.delay, // Store delay instead of absolute time
+                    baseSpawnTime: Date.now(), // Store base time
                     hpMultiplier: group.hpMultiplier,
                     rewardMultiplier: group.rewardMultiplier
                 });
@@ -314,7 +324,9 @@ class GameEngine {
         const toSpawn = [];
         const now = Date.now();
         this.enemySpawnQueue = this.enemySpawnQueue.filter(spawn => {
-            if (now >= spawn.spawnTime) {
+            // Calculate adjusted spawn time based on current speed multiplier
+            const adjustedSpawnTime = spawn.baseSpawnTime + (spawn.spawnDelay / this.speedMultiplier);
+            if (now >= adjustedSpawnTime) {
                 toSpawn.push(spawn);
                 return false;
             }
@@ -346,18 +358,19 @@ class GameEngine {
     
     placeTower(type, gridX, gridY) {
         if (!this.map.isBuildable(gridX, gridY)) return false;
-        
+
         const cost = CONFIG.TOWER_TYPES[type].cost;
         if (this.coins < cost) return false;
-        
+
         if (this.getTowerAt(gridX, gridY)) return false;
-        
+
         const tower = new Tower(type, gridX, gridY);
         this.towers.push(tower);
         this.coins -= cost;
         this.map.setBuildable(gridX, gridY, false);
-        
+
         this.uiManager.deselectTowerType();
+        this.saveGameState();
         return true;
     }
     
@@ -371,28 +384,159 @@ class GameEngine {
             this.towers.splice(index, 1);
             this.coins += tower.getSellValue();
             this.map.setBuildable(tower.gridX, tower.gridY, true);
+            this.saveGameState();
         }
     }
     
     spendCoins(amount) {
         if (this.coins >= amount) {
             this.coins -= amount;
+            this.saveGameState();
             return true;
         }
         return false;
     }
     
     endGame() {
+        // Don't end game if HP is still above 0
+        if (this.playerHp > 0) {
+            console.log('Game over called but player still has HP:', this.playerHp);
+            return;
+        }
+
         this.gameOver = true;
         this.storageManager.saveHighScore(this.currentWave);
+        this.storageManager.clearGameState(); // Clear save on game over
         this.uiManager.showGameOver();
-        
+
         if (this.animationId) {
             cancelAnimationFrame(this.animationId);
         }
     }
+
+    restartGame() {
+        // Clear game state
+        this.storageManager.clearGameState();
+
+        // Cancel animation frame
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+        }
+
+        // Reset all game variables
+        this.enemies = [];
+        this.towers = [];
+        this.projectiles = [];
+        this.particleSystem = new ParticleSystem();
+
+        this.coins = CONFIG.STARTING_COINS;
+        this.playerHp = CONFIG.STARTING_HP;
+        this.currentWave = 0;
+        this.waveInProgress = false;
+        this.gameOver = false;
+
+        this.enemySpawnQueue = [];
+        this.lastSpawnTime = 0;
+        this.speedMultiplier = 1;
+        this.autoWaveEnabled = false;
+        this.gameTime = 0; // Reset game time
+
+        // Reset map buildable grid
+        this.map = new Map(this.canvas);
+
+        // Hide game over screen if visible
+        const gameOverScreen = document.getElementById('game-over-screen');
+        if (gameOverScreen) {
+            gameOverScreen.classList.add('hidden');
+        }
+
+        // Update UI
+        this.uiManager.updateDisplay();
+        const autoCheckbox = document.getElementById('auto-wave-checkbox');
+        if (autoCheckbox) {
+            autoCheckbox.checked = false;
+        }
+
+        // Reset speed to 1x
+        const speedButtons = document.querySelectorAll('.speed-btn');
+        speedButtons.forEach(btn => btn.classList.remove('active'));
+        const speed1xBtn = document.querySelector('.speed-btn[data-speed="1"]');
+        if (speed1xBtn) {
+            speed1xBtn.classList.add('active');
+        }
+
+        // Restart game loop
+        this.lastTime = 0;
+        this.render();
+        this.gameLoop(0);
+    }
     
     setSpeedMultiplier(speed) {
         this.speedMultiplier = speed;
+        this.saveGameState();
+    }
+
+    saveGameState() {
+        if (this.gameOver) return;
+
+        const gameState = {
+            coins: this.coins,
+            playerHp: this.playerHp,
+            currentWave: this.currentWave,
+            waveInProgress: this.waveInProgress,
+            speedMultiplier: this.speedMultiplier,
+            autoWaveEnabled: this.autoWaveEnabled,
+            towers: this.towers.map(tower => ({
+                type: tower.type,
+                gridX: tower.gridX,
+                gridY: tower.gridY,
+                level: tower.level
+            })),
+            timestamp: Date.now()
+        };
+
+        this.storageManager.saveGameState(gameState);
+    }
+
+    loadGameState() {
+        const savedState = this.storageManager.loadGameState();
+        if (!savedState) return false;
+
+        // Check if save is too old (more than 1 hour)
+        if (Date.now() - savedState.timestamp > 3600000) {
+            this.storageManager.clearGameState();
+            return false;
+        }
+
+        this.coins = savedState.coins || CONFIG.STARTING_COINS;
+        this.playerHp = savedState.playerHp || CONFIG.STARTING_HP;
+        this.currentWave = savedState.currentWave || 0;
+        this.waveInProgress = false; // Always start with wave not in progress
+        this.speedMultiplier = savedState.speedMultiplier || 1;
+        this.autoWaveEnabled = savedState.autoWaveEnabled || false;
+
+        // Restore towers
+        if (savedState.towers) {
+            savedState.towers.forEach(towerData => {
+                const tower = new Tower(towerData.type, towerData.gridX, towerData.gridY);
+                // Restore tower level
+                for (let i = 1; i < towerData.level; i++) {
+                    tower.upgrade();
+                }
+                this.towers.push(tower);
+                this.map.setBuildable(towerData.gridX, towerData.gridY, false);
+            });
+        }
+
+        return true;
+    }
+
+    clearGameState() {
+        this.storageManager.clearGameState();
+    }
+
+    setAutoWave(enabled) {
+        this.autoWaveEnabled = enabled;
+        this.saveGameState();
     }
 }

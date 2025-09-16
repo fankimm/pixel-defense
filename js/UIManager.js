@@ -8,12 +8,30 @@ class UIManager {
     }
     
     initEventListeners() {
+        // Initial affordability update
+        this.updateTowerAffordability();
+
         document.getElementById('start-wave-btn').addEventListener('click', () => {
             this.gameEngine.startWave();
         });
+
+        // Auto wave toggle
+        const autoWaveCheckbox = document.getElementById('auto-wave-checkbox');
+        autoWaveCheckbox.addEventListener('change', (e) => {
+            this.gameEngine.setAutoWave(e.target.checked);
+        });
+        // Restore auto wave state
+        autoWaveCheckbox.checked = this.gameEngine.autoWaveEnabled;
         
         document.getElementById('restart-btn').addEventListener('click', () => {
             location.reload();
+        });
+
+        // New game button
+        document.getElementById('new-game-btn').addEventListener('click', () => {
+            if (confirm(i18n.t('confirmNewGame') || 'Start a new game? Current progress will be lost.')) {
+                this.gameEngine.restartGame();
+            }
         });
         
         // Speed control buttons - add touch support for mobile
@@ -138,12 +156,22 @@ class UIManager {
     showUpgradePanel(tower) {
         const panel = document.getElementById('upgrade-panel');
         panel.classList.remove('hidden');
-        
-        document.getElementById('tower-level').textContent = tower.level;
-        document.getElementById('tower-damage').textContent = tower.damage;
-        document.getElementById('tower-range').textContent = Math.floor(tower.range);
-        document.getElementById('upgrade-cost').textContent = tower.getUpgradeCost();
-        document.getElementById('sell-value').textContent = tower.getSellValue();
+
+        // Update title
+        panel.querySelector('h4').textContent = i18n.t('towerUpgrade');
+
+        // Update labels in upgrade info
+        const upgradeInfo = panel.querySelector('.upgrade-info');
+        upgradeInfo.innerHTML = `
+            <div>${i18n.t('level')}: <span id="tower-level">${tower.level}</span></div>
+            <div>${i18n.t('damage')}: <span id="tower-damage">${tower.damage}</span></div>
+            <div>${i18n.t('range')}: <span id="tower-range">${Math.floor(tower.range)}</span></div>
+        `;
+
+        // Update buttons
+        document.getElementById('upgrade-btn').innerHTML = `${i18n.t('upgrade')} (💰 <span id="upgrade-cost">${tower.getUpgradeCost()}</span>)`;
+        document.getElementById('sell-btn').innerHTML = `${i18n.t('sell')} (💰 <span id="sell-value">${tower.getSellValue()}</span>)`;
+        document.getElementById('close-upgrade-btn').textContent = i18n.t('close');
         
         const upgradeBtn = document.getElementById('upgrade-btn');
         if (this.gameEngine.coins >= tower.getUpgradeCost()) {
@@ -183,13 +211,13 @@ class UIManager {
         const maxHp = 20; // Starting HP
         const currentHp = this.gameEngine.playerHp;
         const hpPercentage = Math.max(0, (currentHp / maxHp) * 100);
-        
+
         const hpDisplay = document.getElementById('hp-display');
         const hpText = document.getElementById('hp-text');
         const hpFill = document.getElementById('hp-fill');
-        
+
         if (hpDisplay) hpDisplay.textContent = currentHp;
-        if (hpText) hpText.innerHTML = `HP: ${currentHp}/${maxHp}`;
+        if (hpText) hpText.innerHTML = `${i18n.t('hp')}: ${currentHp}/${maxHp}`;
         if (hpFill) {
             hpFill.style.width = hpPercentage + '%';
             
@@ -204,33 +232,54 @@ class UIManager {
         }
         
         const coinsDisplay = document.getElementById('coins-display');
-        const scoreDisplay = document.getElementById('score-display');
-        
+
         if (coinsDisplay) coinsDisplay.textContent = this.gameEngine.coins;
-        if (scoreDisplay) scoreDisplay.textContent = this.gameEngine.score.toLocaleString();
-        
-        // Update combo display
-        const comboDisplay = document.getElementById('combo-display');
-        if (this.gameEngine.combo > 1) {
-            comboDisplay.style.display = 'flex';
-            document.getElementById('combo-multiplier').textContent = Math.min(this.gameEngine.combo, 10);
-        } else {
-            comboDisplay.style.display = 'none';
-        }
-        
+
+        // Update tower panel affordability
+        this.updateTowerAffordability();
+
         const startBtn = document.getElementById('start-wave-btn');
         if (this.gameEngine.waveInProgress) {
             startBtn.disabled = true;
-            startBtn.textContent = 'Wave in Progress';
+            startBtn.textContent = i18n.t('waveInProgress');
         } else {
             startBtn.disabled = false;
-            startBtn.textContent = 'Start Wave';
+            startBtn.textContent = i18n.t('startWave');
         }
     }
     
     showGameOver() {
-        document.getElementById('game-over-screen').classList.remove('hidden');
-        document.getElementById('final-wave').textContent = this.gameEngine.currentWave;
-        document.getElementById('high-score').textContent = this.gameEngine.storageManager.getHighScore();
+        const gameOverScreen = document.getElementById('game-over-screen');
+        gameOverScreen.classList.remove('hidden');
+
+        // Update game over text
+        gameOverScreen.querySelector('h2').textContent = i18n.t('gameOver');
+
+        // Update wave reached message
+        const finalWaveP = gameOverScreen.querySelector('p:nth-of-type(1)');
+        finalWaveP.innerHTML = `${i18n.t('youReachedWave')} <span id="final-wave">${this.gameEngine.currentWave}</span>`;
+
+        // Update high score message
+        const highScoreP = gameOverScreen.querySelector('p:nth-of-type(2)');
+        highScoreP.innerHTML = `${i18n.t('highScore')} <span id="high-score">${this.gameEngine.storageManager.getHighScore()}</span>`;
+
+        // Update play again button
+        document.getElementById('restart-btn').textContent = i18n.t('playAgain');
+    }
+
+    updateTowerAffordability() {
+        const towerOptions = document.querySelectorAll('.tower-option');
+        towerOptions.forEach(option => {
+            const towerType = option.dataset.towerType;
+            const cost = CONFIG.TOWER_TYPES[towerType].cost;
+
+            if (this.gameEngine.coins >= cost) {
+                option.classList.remove('unaffordable');
+                option.classList.add('affordable');
+            } else {
+                option.classList.remove('affordable');
+                option.classList.add('unaffordable');
+            }
+        });
     }
 }

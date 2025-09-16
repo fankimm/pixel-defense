@@ -10,21 +10,36 @@
     <div id="game-container">
         <header id="game-header">
             <div class="header-item">
-                <span class="label">Wave:</span>
+                <span class="label" id="wave-label">Wave:</span>
                 <span id="wave-display">1</span>
             </div>
             <div class="header-item">
-                <span class="label">Coins:</span>
+                <span class="label" id="coins-label">Coins:</span>
                 <span id="coins-display">100</span>
             </div>
-            <div class="header-item">
-                <span class="label">Score:</span>
-                <span id="score-display">0</span>
-            </div>
-            <div class="header-item" id="combo-display" style="display: none;">
-                <span class="combo-text">COMBO x<span id="combo-multiplier">1</span></span>
-            </div>
             <button id="start-wave-btn">Start Wave</button>
+            <button id="new-game-btn" class="new-game-btn">New Game</button>
+            <label class="auto-wave-toggle">
+                <input type="checkbox" id="auto-wave-checkbox">
+                <span class="toggle-text">Auto</span>
+            </label>
+            <select id="language-selector" class="language-selector">
+                <option value="en">🇬🇧 English</option>
+                <option value="zh">🇨🇳 中文</option>
+                <option value="es">🇪🇸 Español</option>
+                <option value="hi">🇮🇳 हिन्दी</option>
+                <option value="ar">🇸🇦 العربية</option>
+                <option value="pt">🇵🇹 Português</option>
+                <option value="ru">🇷🇺 Русский</option>
+                <option value="ja">🇯🇵 日本語</option>
+                <option value="de">🇩🇪 Deutsch</option>
+                <option value="fr">🇫🇷 Français</option>
+                <option value="ko">🇰🇷 한국어</option>
+                <option value="it">🇮🇹 Italiano</option>
+                <option value="tr">🇹🇷 Türkçe</option>
+                <option value="pl">🇵🇱 Polski</option>
+                <option value="nl">🇳🇱 Nederlands</option>
+            </select>
         </header>
         
         <div id="game-content">
@@ -131,6 +146,7 @@
         </div>
     </div>
 
+    <script src="js/i18n.js"></script>
     <script src="js/config.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/Particle.js"></script>
