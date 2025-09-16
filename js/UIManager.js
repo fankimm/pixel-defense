@@ -43,53 +43,58 @@ class UIManager {
             mobileMenu.style.minWidth = '200px';
             mobileMenu.style.padding = '0';
 
-            // Track if menu was just opened to prevent immediate closing
-            let menuJustOpened = false;
+            // Also style the content container
+            const menuContent = mobileMenu.querySelector('.mobile-menu-content');
+            if (menuContent) {
+                menuContent.style.padding = '20px';
+                menuContent.style.display = 'block';
+            }
+
+            // Track click timestamp to prevent event collision
+            let lastHamburgerClickTime = 0;
+            let isMenuOpen = false;
 
             hamburgerBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
+                e.stopImmediatePropagation();
                 e.preventDefault();
 
-                const isActive = mobileMenu.style.display === 'block';
+                // Store timestamp of this click
+                lastHamburgerClickTime = e.timeStamp || Date.now();
 
-                if (!isActive) {
-                    // Show menu
-                    mobileMenu.style.display = 'block';
-                    mobileMenu.style.visibility = 'visible';
-                    mobileMenu.style.opacity = '1';
+                isMenuOpen = !isMenuOpen;
+
+                if (isMenuOpen) {
+                    // Show menu with important flag
+                    mobileMenu.style.cssText = mobileMenu.style.cssText + 'display: block !important; visibility: visible !important; opacity: 1 !important;';
                     hamburgerBtn.classList.add('active');
-
-                    // Set flag to prevent immediate closing
-                    menuJustOpened = true;
-                    setTimeout(() => {
-                        menuJustOpened = false;
-                    }, 100);
-
                     console.log('Menu opened');
                 } else {
                     // Hide menu
                     mobileMenu.style.display = 'none';
+                    mobileMenu.style.visibility = 'hidden';
+                    mobileMenu.style.opacity = '0';
                     hamburgerBtn.classList.remove('active');
-
                     console.log('Menu closed');
                 }
-            });
+            }, true); // Use capture phase
 
-            // Close menu when clicking outside - use setTimeout to ensure it runs after hamburger click
+            // Close menu when clicking outside - use capture phase
             document.addEventListener('click', (e) => {
-                // Skip if menu was just opened
-                if (menuJustOpened) {
+                // Skip if this is the same click event as hamburger button
+                const currentTime = e.timeStamp || Date.now();
+                if (Math.abs(currentTime - lastHamburgerClickTime) < 10) {
                     return;
                 }
 
-                if (!hamburgerBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
-                    if (mobileMenu.style.display === 'block') {
-                        hamburgerBtn.classList.remove('active');
-                        mobileMenu.style.display = 'none';
-                        console.log('Menu closed by outside click');
-                    }
+                if (isMenuOpen && !hamburgerBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+                    isMenuOpen = false;
+                    hamburgerBtn.classList.remove('active');
+                    mobileMenu.style.display = 'none';
+                    mobileMenu.style.visibility = 'hidden';
+                    mobileMenu.style.opacity = '0';
+                    console.log('Menu closed by outside click');
                 }
-            });
+            }, true); // Use capture phase
         }
 
         // Mobile new game button
