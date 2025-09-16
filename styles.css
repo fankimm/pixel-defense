@@ -299,6 +299,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 1; /* Ensure HP text stays below modals */
     color: white;
     font-weight: bold;
     font-size: 14px;
@@ -439,6 +440,7 @@ body {
     color: white;
     min-width: 250px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    z-index: 1000; /* Ensure panel is above game elements */
 }
 
 #upgrade-panel h4 {
@@ -501,7 +503,7 @@ body {
 }
 
 #game-over-screen {
-    position: absolute;
+    position: fixed; /* Changed to fixed for better positioning */
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -512,17 +514,38 @@ body {
     text-align: center;
     color: white;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+    z-index: 9999; /* Ensure modal is on top */
+    min-width: 300px;
+    max-width: 90%; /* Prevent overflow on mobile */
 }
 
 #game-over-screen h2 {
     font-size: 36px;
     margin-bottom: 20px;
     color: #ef4444;
+    white-space: nowrap; /* Prevent title wrapping */
 }
 
 #game-over-screen p {
     font-size: 18px;
     margin-bottom: 15px;
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+/* Mobile adjustments for game over screen */
+@media (max-width: 480px) {
+    #game-over-screen {
+        padding: 30px 20px;
+        min-width: 280px;
+    }
+
+    #game-over-screen h2 {
+        font-size: 28px;
+    }
+
+    #game-over-screen p {
+        font-size: 16px;
+    }
 }
 
 #restart-btn {
