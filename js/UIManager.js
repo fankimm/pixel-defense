@@ -37,7 +37,30 @@ class UIManager {
                 mobileMenu.classList.toggle('active');
 
                 // Force style update for file:// protocol compatibility
-                mobileMenu.style.display = mobileMenu.classList.contains('active') ? 'block' : 'none';
+                if (mobileMenu.classList.contains('active')) {
+                    mobileMenu.style.display = 'block';
+                    const rect = mobileMenu.getBoundingClientRect();
+                    console.log('Menu position:', {
+                        top: rect.top,
+                        right: rect.right,
+                        bottom: rect.bottom,
+                        left: rect.left,
+                        width: rect.width,
+                        height: rect.height,
+                        visible: rect.width > 0 && rect.height > 0,
+                        inViewport: rect.top >= 0 && rect.left >= 0 && rect.bottom <= window.innerHeight && rect.right <= window.innerWidth
+                    });
+                    console.log('Menu computed styles:', {
+                        display: window.getComputedStyle(mobileMenu).display,
+                        visibility: window.getComputedStyle(mobileMenu).visibility,
+                        opacity: window.getComputedStyle(mobileMenu).opacity,
+                        zIndex: window.getComputedStyle(mobileMenu).zIndex,
+                        position: window.getComputedStyle(mobileMenu).position,
+                        backgroundColor: window.getComputedStyle(mobileMenu).backgroundColor
+                    });
+                } else {
+                    mobileMenu.style.display = 'none';
+                }
             });
 
             // Close menu when clicking outside
