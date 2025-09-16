@@ -26,6 +26,7 @@ class UIManager {
         // Hamburger menu functionality
         const hamburgerBtn = document.getElementById('hamburger-btn');
         const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuClose = document.getElementById('mobile-menu-close');
         const mobileNewGameBtn = document.getElementById('mobile-new-game-btn');
         const mobileLanguageSelector = document.getElementById('mobile-language-selector');
 
@@ -50,9 +51,49 @@ class UIManager {
                 menuContent.style.display = 'block';
             }
 
+            // Style the close button
+            if (mobileMenuClose) {
+                mobileMenuClose.style.position = 'absolute';
+                mobileMenuClose.style.top = '10px';
+                mobileMenuClose.style.right = '10px';
+                mobileMenuClose.style.background = '#ef4444';
+                mobileMenuClose.style.color = 'white';
+                mobileMenuClose.style.border = 'none';
+                mobileMenuClose.style.borderRadius = '50%';
+                mobileMenuClose.style.width = '32px';
+                mobileMenuClose.style.height = '32px';
+                mobileMenuClose.style.fontSize = '24px';
+                mobileMenuClose.style.fontWeight = 'bold';
+                mobileMenuClose.style.cursor = 'pointer';
+                mobileMenuClose.style.display = 'flex';
+                mobileMenuClose.style.alignItems = 'center';
+                mobileMenuClose.style.justifyContent = 'center';
+                mobileMenuClose.style.zIndex = '100000';
+                mobileMenuClose.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.3)';
+            }
+
             // Track click timestamp to prevent event collision
             let lastHamburgerClickTime = 0;
             let isMenuOpen = false;
+
+            // Function to close menu
+            const closeMenu = () => {
+                isMenuOpen = false;
+                mobileMenu.style.display = 'none';
+                mobileMenu.style.visibility = 'hidden';
+                mobileMenu.style.opacity = '0';
+                hamburgerBtn.classList.remove('active');
+                console.log('Menu closed');
+            };
+
+            // Close button click handler
+            if (mobileMenuClose) {
+                mobileMenuClose.addEventListener('click', (e) => {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                    closeMenu();
+                });
+            }
 
             hamburgerBtn.addEventListener('click', (e) => {
                 e.stopImmediatePropagation();
@@ -69,12 +110,8 @@ class UIManager {
                     hamburgerBtn.classList.add('active');
                     console.log('Menu opened');
                 } else {
-                    // Hide menu
-                    mobileMenu.style.display = 'none';
-                    mobileMenu.style.visibility = 'hidden';
-                    mobileMenu.style.opacity = '0';
-                    hamburgerBtn.classList.remove('active');
-                    console.log('Menu closed');
+                    // Hide menu using the closeMenu function
+                    closeMenu();
                 }
             }, true); // Use capture phase
 
@@ -87,12 +124,8 @@ class UIManager {
                 }
 
                 if (isMenuOpen && !hamburgerBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
-                    isMenuOpen = false;
-                    hamburgerBtn.classList.remove('active');
-                    mobileMenu.style.display = 'none';
-                    mobileMenu.style.visibility = 'hidden';
-                    mobileMenu.style.opacity = '0';
-                    console.log('Menu closed by outside click');
+                    closeMenu();
+                    console.log('(by outside click)');
                 }
             }, true); // Use capture phase
         }
