@@ -43,6 +43,9 @@ class UIManager {
             mobileMenu.style.minWidth = '200px';
             mobileMenu.style.padding = '0';
 
+            // Track if menu was just opened to prevent immediate closing
+            let menuJustOpened = false;
+
             hamburgerBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 e.preventDefault();
@@ -56,6 +59,12 @@ class UIManager {
                     mobileMenu.style.opacity = '1';
                     hamburgerBtn.classList.add('active');
 
+                    // Set flag to prevent immediate closing
+                    menuJustOpened = true;
+                    setTimeout(() => {
+                        menuJustOpened = false;
+                    }, 100);
+
                     console.log('Menu opened');
                 } else {
                     // Hide menu
@@ -66,8 +75,13 @@ class UIManager {
                 }
             });
 
-            // Close menu when clicking outside
+            // Close menu when clicking outside - use setTimeout to ensure it runs after hamburger click
             document.addEventListener('click', (e) => {
+                // Skip if menu was just opened
+                if (menuJustOpened) {
+                    return;
+                }
+
                 if (!hamburgerBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
                     if (mobileMenu.style.display === 'block') {
                         hamburgerBtn.classList.remove('active');
