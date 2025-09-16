@@ -27,8 +27,8 @@ class Tower {
         this.chainTargets = [];
     }
     
-    update(enemies, gameTime, deltaTime) {
-        this.findTarget(enemies);
+    update(enemies, gameTime, deltaTime, weatherEffects) {
+        this.findTarget(enemies, weatherEffects);
 
         if (this.target && this.target.isAlive()) {
             const dx = this.target.x - this.x;
@@ -38,7 +38,7 @@ class Tower {
             // Use game time for consistent firing regardless of speed
             const fireDelay = 1000 / this.fireRate;
             if (gameTime - this.lastFireTime >= fireDelay) {
-                const projectile = this.createProjectile();
+                const projectile = this.createProjectile(weatherEffects);
                 this.lastFireTime = gameTime;
                 return projectile;
             }
@@ -47,11 +47,12 @@ class Tower {
         return null;
     }
     
-    findTarget(enemies) {
+    findTarget(enemies, weatherEffects = {}) {
         let targetEnemy = null;
         let lowestHp = Infinity;
 
         const validEnemies = [];
+        const effectiveRange = this.range * (weatherEffects.towerRangeMultiplier || 1);
 
         for (const enemy of enemies) {
             if (!enemy.isAlive()) continue;
@@ -63,7 +64,7 @@ class Tower {
             if (enemy.isFlying && !this.canHitFlying()) continue;
 
             const distance = Utils.distance(this.x, this.y, enemy.x, enemy.y);
-            if (distance <= this.range) {
+            if (distance <= effectiveRange) {
                 validEnemies.push(enemy);
             }
         }
@@ -84,14 +85,16 @@ class Tower {
         return ['sniper', 'laser', 'chain'].includes(this.type);
     }
     
-    createProjectile() {
+    createProjectile(weatherEffects = {}) {
         if (!this.target) return null;
-        
+
+        const damageMultiplier = weatherEffects.towerDamageMultiplier || 1;
+
         return {
             x: this.x,
             y: this.y,
             targetEnemy: this.target,
-            damage: this.damage,
+            damage: Math.round(this.damage * damageMultiplier),
             speed: this.config.projectileSpeed,
             color: this.color,
             type: this.type,

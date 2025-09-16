@@ -40,7 +40,7 @@ class UIManager {
             mobileMenu.style.border = '2px solid #0f3460';
             mobileMenu.style.borderRadius = '12px';
             mobileMenu.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.5)';
-            mobileMenu.style.zIndex = '99999';
+            mobileMenu.style.zIndex = '9998';  // Below game over screen
             mobileMenu.style.minWidth = '200px';
             mobileMenu.style.padding = '0';
 
@@ -68,7 +68,7 @@ class UIManager {
                 mobileMenuClose.style.display = 'flex';
                 mobileMenuClose.style.alignItems = 'center';
                 mobileMenuClose.style.justifyContent = 'center';
-                mobileMenuClose.style.zIndex = '100000';
+                mobileMenuClose.style.zIndex = '9999';  // Same as mobile menu
                 mobileMenuClose.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.3)';
             }
 
@@ -130,16 +130,37 @@ class UIManager {
             }, true); // Use capture phase
         }
 
-        // Mobile new game button
+        // Mobile new game button - remove old listener first to prevent duplicates
         if (mobileNewGameBtn) {
-            mobileNewGameBtn.addEventListener('click', () => {
+            // Set the correct translation
+            mobileNewGameBtn.textContent = i18n.t('newGame');
+
+            // Store handler as a property to be able to remove it
+            if (this.mobileNewGameHandler) {
+                mobileNewGameBtn.removeEventListener('click', this.mobileNewGameHandler);
+            }
+            this.mobileNewGameHandler = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
                 if (confirm(i18n.t('confirmNewGame') || 'Start a new game? Current progress will be lost.')) {
+                    // Hide game over screen if visible
+                    const gameOverScreen = document.getElementById('game-over-screen');
+                    if (gameOverScreen && !gameOverScreen.classList.contains('hidden')) {
+                        gameOverScreen.classList.add('hidden');
+                    }
                     this.gameEngine.restartGame();
                     // Close menu after action
-                    hamburgerBtn.classList.remove('active');
-                    mobileMenu.classList.remove('active');
+                    const hamburgerBtn = document.getElementById('hamburger-btn');
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if (hamburgerBtn) hamburgerBtn.classList.remove('active');
+                    if (mobileMenu) {
+                        mobileMenu.style.display = 'none';
+                        mobileMenu.style.visibility = 'hidden';
+                        mobileMenu.style.opacity = '0';
+                    }
                 }
-            });
+            };
+            mobileNewGameBtn.addEventListener('click', this.mobileNewGameHandler);
         }
 
         // Mobile language selector
@@ -155,12 +176,17 @@ class UIManager {
                     desktopSelector.value = e.target.value;
                 }
                 // Update mobile menu text
-                mobileNewGameBtn.textContent = i18n.t('newGame');
+                if (mobileNewGameBtn) mobileNewGameBtn.textContent = i18n.t('newGame');
                 document.querySelector('.mobile-menu-label').textContent = i18n.t('language') + ':';
             });
         }
         
         document.getElementById('restart-btn').addEventListener('click', () => {
+            // Hide game over screen first
+            const gameOverScreen = document.getElementById('game-over-screen');
+            if (gameOverScreen) {
+                gameOverScreen.classList.add('hidden');
+            }
             location.reload();
         });
 
@@ -173,6 +199,11 @@ class UIManager {
             }
             this.newGameHandler = () => {
                 if (confirm(i18n.t('confirmNewGame') || 'Start a new game? Current progress will be lost.')) {
+                    // Hide game over screen if visible
+                    const gameOverScreen = document.getElementById('game-over-screen');
+                    if (gameOverScreen && !gameOverScreen.classList.contains('hidden')) {
+                        gameOverScreen.classList.add('hidden');
+                    }
                     this.gameEngine.restartGame();
                 }
             };

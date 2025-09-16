@@ -663,7 +663,7 @@ body {
     text-align: center;
     color: white;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
-    z-index: 9999; /* Ensure modal is on top */
+    z-index: 10000; /* Ensure modal is on top of everything */
     min-width: 300px;
     max-width: 90%; /* Prevent overflow on mobile */
 }
@@ -717,6 +717,14 @@ body {
 
 .hidden {
     display: none !important;
+}
+
+/* Weather system animations */
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
 }
 
 /* Funny Fake Banner Ad Styles */

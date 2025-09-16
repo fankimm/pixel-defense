@@ -39,6 +39,9 @@ class GameEngine {
 
 
         this.storageManager = new StorageManager();
+        this.comboSystem = new ComboSystem();
+        this.weatherSystem = new WeatherSystem();
+        this.achievementSystem = new AchievementSystem();
         this.uiManager = new UIManager(this);
         
         this.lastTime = 0;
@@ -91,18 +94,34 @@ class GameEngine {
         
         // Update particle system
         this.particleSystem.update(deltaTime);
-        
+
+        // Update combo system
+        this.comboSystem.update(deltaTime);
+
+        // Update weather system
+        this.weatherSystem.update(deltaTime);
+
+        // Get weather effects
+        const weatherEffects = this.weatherSystem.getEffects();
+
         this.enemies.forEach(enemy => {
+            // Apply weather speed multiplier
+            const originalSpeed = enemy.speed;
+            enemy.speed = originalSpeed * (weatherEffects.enemySpeedMultiplier || 1);
+
             if (enemy instanceof SpecialEnemy) {
                 enemy.update(deltaTime, this.enemies);
             } else {
                 enemy.update(deltaTime);
             }
+
+            // Restore original speed (in case it's stored)
+            enemy.speed = originalSpeed;
         });
         
         const newProjectiles = [];
         this.towers.forEach(tower => {
-            const projectile = tower.update(this.enemies, gameTime, deltaTime);
+            const projectile = tower.update(this.enemies, gameTime, deltaTime, weatherEffects);
             if (projectile) {
                 newProjectiles.push(new Projectile(projectile));
             }
@@ -116,9 +135,21 @@ class GameEngine {
         
         this.enemies = this.enemies.filter(enemy => {
             if (!enemy.isAlive()) {
-                this.coins += enemy.reward;
+                // Apply weather reward multiplier
+                const weatherReward = Math.round(enemy.reward * (weatherEffects.rewardMultiplier || 1));
+                // Add combo bonus
+                const bonusCoins = this.comboSystem.addKill(enemy.x, enemy.y, weatherReward);
+                this.coins += weatherReward + bonusCoins;
+
+                // Update achievements
+                this.achievementSystem.updateStats('kill', 1);
+                this.achievementSystem.updateStats('coins', this.coins);
+                const comboStats = this.comboSystem.getStats();
+                if (comboStats.currentCombo > 1) {
+                    this.achievementSystem.updateStats('combo', comboStats.currentCombo);
+                }
                 this.saveGameState();
-                
+
                 // Create particle effects
                 this.particleSystem.createExplosion(enemy.x, enemy.y, enemy.color);
                 this.particleSystem.createCoinEffect(enemy.x, enemy.y);
@@ -180,6 +211,12 @@ class GameEngine {
         this.projectiles.forEach(projectile => projectile.draw(this.ctx));
         
         this.particleSystem.draw(this.ctx);
+
+        // Draw weather effects (before other elements)
+        this.weatherSystem.draw(this.ctx);
+
+        // Draw combo effects
+        this.comboSystem.draw(this.ctx);
     }
     
     startWave() {
@@ -187,6 +224,9 @@ class GameEngine {
         
         this.currentWave++;
         this.waveInProgress = true;
+
+        // Update wave achievement
+        this.achievementSystem.updateStats('wave', this.currentWave);
         
         const waveConfig = this.getWaveConfig(this.currentWave);
         
@@ -369,6 +409,9 @@ class GameEngine {
         this.coins -= cost;
         this.map.setBuildable(gridX, gridY, false);
 
+        // Update achievements
+        this.achievementSystem.updateStats('tower', type);
+
         this.uiManager.deselectTowerType();
         this.saveGameState();
         return true;
@@ -428,6 +471,8 @@ class GameEngine {
         this.towers = [];
         this.projectiles = [];
         this.particleSystem = new ParticleSystem();
+        this.comboSystem.reset();
+        this.weatherSystem = new WeatherSystem();
 
         this.coins = CONFIG.STARTING_COINS;
         this.playerHp = CONFIG.STARTING_HP;
