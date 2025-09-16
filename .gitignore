@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Debug files
+debug.html
+pixel-defense-standalone.html
+pixel-defense-ios.html
+
+# Logs
+*.log
+npm-debug.log*

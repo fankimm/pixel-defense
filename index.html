@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pixel Defense</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <header id="game-header">
+            <div class="header-item">
+                <span class="label">Wave:</span>
+                <span id="wave-display">1</span>
+            </div>
+            <div class="header-item">
+                <span class="label">Coins:</span>
+                <span id="coins-display">100</span>
+            </div>
+            <div class="header-item">
+                <span class="label">Score:</span>
+                <span id="score-display">0</span>
+            </div>
+            <div class="header-item" id="combo-display" style="display: none;">
+                <span class="combo-text">COMBO x<span id="combo-multiplier">1</span></span>
+            </div>
+            <button id="start-wave-btn">Start Wave</button>
+        </header>
+        
+        <div id="game-content">
+            <main id="game-area">
+                <canvas id="game-canvas"></canvas>
+                <div id="upgrade-panel" class="hidden">
+                    <h4>Tower Upgrade</h4>
+                    <div class="upgrade-info">
+                        <div>Level: <span id="tower-level">1</span></div>
+                        <div>Damage: <span id="tower-damage">10</span></div>
+                        <div>Range: <span id="tower-range">100</span></div>
+                    </div>
+                    <button id="upgrade-btn">Upgrade (💰 <span id="upgrade-cost">50</span>)</button>
+                    <button id="sell-btn">Sell (💰 <span id="sell-value">25</span>)</button>
+                    <button id="close-upgrade-btn">Close</button>
+                </div>
+            </main>
+            
+            <div id="middle-controls">
+                <div id="hp-bar-container">
+                    <div id="hp-bar">
+                        <div id="hp-fill"></div>
+                        <div id="hp-text">HP: <span id="hp-display">20</span>/20</div>
+                    </div>
+                </div>
+                <div class="speed-controls">
+                    <span class="label">Speed:</span>
+                    <button class="speed-btn" data-speed="1">1x</button>
+                    <button class="speed-btn" data-speed="2">2x</button>
+                    <button class="speed-btn" data-speed="4">4x</button>
+                    <button class="speed-btn" data-speed="8">8x</button>
+                </div>
+            </div>
+            
+            <aside id="tower-panel">
+                <div class="tower-option" data-tower-type="basic">
+                    <div class="tower-icon" style="background: #3b82f6"></div>
+                    <div class="tower-info">
+                        <div class="tower-name">Basic</div>
+                        <div class="tower-cost">💰 50</div>
+                    </div>
+                </div>
+                <div class="tower-option" data-tower-type="sniper">
+                    <div class="tower-icon" style="background: #ef4444"></div>
+                    <div class="tower-info">
+                        <div class="tower-name">Sniper</div>
+                        <div class="tower-cost">💰 100</div>
+                    </div>
+                </div>
+                <div class="tower-option" data-tower-type="splash">
+                    <div class="tower-icon" style="background: #f59e0b"></div>
+                    <div class="tower-info">
+                        <div class="tower-name">Splash</div>
+                        <div class="tower-cost">💰 150</div>
+                    </div>
+                </div>
+                <div class="tower-option" data-tower-type="freeze">
+                    <div class="tower-icon" style="background: #06b6d4"></div>
+                    <div class="tower-info">
+                        <div class="tower-name">Ice</div>
+                        <div class="tower-cost">💰 120</div>
+                    </div>
+                </div>
+                <div class="tower-option" data-tower-type="poison">
+                    <div class="tower-icon" style="background: #10b981"></div>
+                    <div class="tower-info">
+                        <div class="tower-name">Poison</div>
+                        <div class="tower-cost">💰 140</div>
+                    </div>
+                </div>
+                <div class="tower-option" data-tower-type="chain">
+                    <div class="tower-icon" style="background: #8b5cf6"></div>
+                    <div class="tower-info">
+                        <div class="tower-name">Chain</div>
+                        <div class="tower-cost">💰 180</div>
+                    </div>
+                </div>
+                <div class="tower-option" data-tower-type="laser">
+                    <div class="tower-icon" style="background: #ec4899"></div>
+                    <div class="tower-info">
+                        <div class="tower-name">Laser</div>
+                        <div class="tower-cost">💰 200</div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+        
+        <div id="game-over-screen" class="hidden">
+            <h2>Game Over!</h2>
+            <p>You reached wave <span id="final-wave">1</span></p>
+            <p>High Score: Wave <span id="high-score">1</span></p>
+            <button id="restart-btn">Play Again</button>
+        </div>
+    </div>
+    
+    <!-- Funny Fake Banner Ads -->
+    <div id="ad-container">
+        <div id="fake-ad-banner" class="fake-ad-banner">
+            <span class="ad-tag">AD</span>
+            <div id="ad-content" class="ad-content-wrapper">
+                <!-- Ad content will be inserted here by JavaScript -->
+            </div>
+            <button class="ad-close" onclick="this.parentElement.style.display='none'">×</button>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/Particle.js"></script>
+    <script src="js/Map.js"></script>
+    <script src="js/Enemy.js"></script>
+    <script src="js/SpecialEnemy.js"></script>
+    <script src="js/Tower.js"></script>
+    <script src="js/Projectile.js"></script>
+    <script src="js/UIManager.js"></script>
+    <script src="js/StorageManager.js"></script>
+    <script src="js/GameEngine.js"></script>
+    <script src="js/FakeAds.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
